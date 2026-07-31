@@ -210,7 +210,8 @@ find ~/.claude/context-guard/logs -name '*.jsonl' -mtime +90 -delete
 ## Files
 
 ```
-install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md · LICENSE
+install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md
+CONTRIBUTING.md · LICENSE
 bin/lib.sh              helpers; everything fails open
 bin/pre-compact.sh      contract via stdout + log        (stdout = ONLY the contract)
 bin/post-compact.sh     tokens before/after/saved + contract check
@@ -233,6 +234,23 @@ stall-limit             turns without progress before STALLED (default 6)
 - Broader host validation: plain CLI and VS Code extension are expected to work (same
   `~/.claude/`), reports welcome.
 - Linux field testing (CI-green today, unproven in daily use).
+
+## Community
+
+The Roadmap above is mostly questions other people's machines can answer, so reports are worth
+as much as patches here.
+
+- **Found a bug?** [Open a bug report](https://github.com/pablojacobi/claude-context-guard/issues/new?template=bug_report.yml).
+  It asks for your Claude Code version, host IDE, OS, and the relevant line from
+  `logs/YYYY-MM.jsonl` — that line is usually the whole diagnosis.
+- **Ran it on a host or OS not listed above?**
+  [File a compatibility report](https://github.com/pablojacobi/claude-context-guard/issues/new?template=compatibility_report.yml),
+  including a plain "works, nothing to see here". That is exactly what promotes a Roadmap item
+  to a fact.
+- **Sending code?** [CONTRIBUTING.md](CONTRIBUTING.md) has the three commands CI runs, the
+  script conventions the hooks depend on (fail open, `set -uo pipefail`, `pre-compact.sh`
+  stdout is the contract and nothing else), and the PR rule: `main` is protected, everything
+  lands through a PR with CI green.
 
 ## License
 
