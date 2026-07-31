@@ -1,0 +1,86 @@
+name: Bug report
+description: Something behaves differently from what the README claims.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: `bin/cg-status.sh` is read-only and often answers the question by
+        itself. If nothing is logged at all, check that `~/.claude/context-guard/disabled`
+        is absent and that you opened a **new** conversation after installing — hooks and
+        the threshold are read when a session starts.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, what you got, and how to reproduce it if you can.
+      placeholder: |
+        Expected: the session to compact around 440K tokens.
+        Got: it compacted at ~780K, as if autoCompactWindow were unset.
+    validations:
+      required: true
+
+  - type: input
+    id: claude-code-version
+    attributes:
+      label: Claude Code version
+      description: >-
+        `claude --version`. Inside an IDE extension, use the bundled binary's version —
+        the extension's marketplace version is a different number and is not the one that
+        runs the hooks.
+      placeholder: "2.1.220"
+    validations:
+      required: true
+
+  - type: input
+    id: host
+    attributes:
+      label: Host / IDE
+      description: Where Claude Code is running, and its version.
+      placeholder: "TRAE IDE 2.x · VS Code extension 1.x · plain CLI in iTerm2"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS and architecture
+      placeholder: "macOS 15.5 (arm64) · Ubuntu 24.04 (x86_64)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: jsonl
+    attributes:
+      label: The relevant line from the JSONL log
+      description: >-
+        One line (or the two lines of the `pre_compact` / `post_compact` pair) from
+        `~/.claude/context-guard/logs/YYYY-MM.jsonl` covering the moment things went wrong.
+        This is the single most useful thing in the report. Lines carry `cwd`, `branch` and
+        `head` — redact those if the path or branch name is sensitive; leave the token
+        fields intact.
+      render: json
+      placeholder: |
+        {"ts":"2026-07-30T04:10:49Z","event":"pre_compact","session_id":"…","cwd":"…","trigger":"auto","tokens_before":null,"contract_bytes":2513,"n":1}
+    validations:
+      required: true
+
+  - type: input
+    id: window
+    attributes:
+      label: Configured autoCompactWindow
+      description: "`jq .autoCompactWindow ~/.claude/settings.json`"
+      placeholder: "473000"
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: >-
+        `bin/cg-status.sh` output, whether other tools also write to
+        `~/.claude/settings.json`, whether two agents share the checkout.
+    validations:
+      required: false
