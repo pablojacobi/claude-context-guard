@@ -125,9 +125,19 @@ if [ -f "$req" ]; then
     rm -f "$req"   # nobody claimed it within the hour: stale, likely orphaned
   else
     rcwd=$(sed -n 's/^cwd: //p' "$req" 2>/dev/null | head -1)
-    # cwd must match so a parallel session in another checkout cannot steal a
-    # request that a different conversation just wrote.
-    if [ "$rcwd" = "$cwd" ]; then
+    rsid=$(sed -n 's/^sid: //p' "$req" 2>/dev/null | head -1)
+    # Identity first: an `sid:` line (from $CLAUDE_CODE_SESSION_ID, written by
+    # the velador skill) binds the request to exactly one session. cwd alone
+    # cannot -- two parallel sessions sitting in the same checkout are
+    # indistinguishable, and on 2026-07-31 a bystander session claimed the
+    # premiere run's request precisely that way. A request carrying an sid for
+    # a DIFFERENT session is left in place for its rightful owner's next Stop.
+    # Requests without an sid (hand-written) fall back to the cwd match.
+    if [ -n "$rsid" ]; then
+      if [ "$rsid" = "$sid" ]; then
+        mv -f "$req" "$marker" 2>/dev/null && printf '0' > "$countf"
+      fi
+    elif [ "$rcwd" = "$cwd" ]; then
       mv -f "$req" "$marker" 2>/dev/null && printf '0' > "$countf"
     fi
   fi
