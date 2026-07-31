@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q shellcheck
+          shellcheck -S warning -x install.sh uninstall.sh bin/*.sh tests/*.sh
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: jq present
+        run: command -v jq && jq --version
+      - name: unit suite (49 assertions, throwaway sandbox)
+        run: tests/run-tests.sh
+      - name: threshold formula canary
+        run: tests/threshold-math.sh
+      - name: clone-anywhere install smoke (fake HOME)
+        run: |
+          set -eu
+          FH=$(mktemp -d)
+          mkdir -p "$FH/.claude/backups"
+          jq -n '{model:"opus", permissions:{allow:["Bash(ls:*)"]}}' > "$FH/.claude/settings.json"
+          HOME="$FH" ./install.sh
+          HOME="$FH" jq -e '.autoCompactWindow == 473000
+            and (.hooks | keys | sort == ["PostCompact","PreCompact","Stop"])' \
+            "$FH/.claude/settings.json"
+          test -f "$FH/.claude/skills/velador/SKILL.md"
+          # Hooks must point at THIS checkout, wherever it was cloned.
+          jq -r '.hooks.PreCompact[0].hooks[0].command' "$FH/.claude/settings.json" \
+            | grep -F "$(pwd)/bin/pre-compact.sh"
+          HOME="$FH" ./uninstall.sh
+          HOME="$FH" jq -e 'has("autoCompactWindow") | not' "$FH/.claude/settings.json"
