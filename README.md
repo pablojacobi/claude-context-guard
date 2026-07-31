@@ -1,5 +1,8 @@
 # claude-context-guard
 
+> This README is the canonical document. A Spanish translation is available at
+> [README.es.md](README.es.md).
+
 Lowers the context ceiling of every Claude Code conversation from **~784,000 to ~440,000
 tokens** on 1M-context models — independently per session, auditable, and fully reversible.
 No clicks, no `tmux send-keys`, no external supervisor process.
@@ -205,7 +208,7 @@ find ~/.claude/context-guard/logs -name '*.jsonl' -mtime +90 -delete
 ## Files
 
 ```
-install.sh · uninstall.sh · README.md · contract.md · CHANGELOG.md · LICENSE
+install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md · LICENSE
 bin/lib.sh              helpers; everything fails open
 bin/pre-compact.sh      contract via stdout + log        (stdout = ONLY the contract)
 bin/post-compact.sh     tokens before/after/saved + contract check
