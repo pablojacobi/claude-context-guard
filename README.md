@@ -51,7 +51,7 @@ the old config: open a new one.
 Verify:
 
 ```sh
-~/.claude/context-guard/tests/run-tests.sh        # 49 assertions, throwaway sandbox
+~/.claude/context-guard/tests/run-tests.sh        # 51 assertions, throwaway sandbox
 ~/.claude/context-guard/tests/threshold-math.sh   # formula canary
 ~/.claude/context-guard/bin/cg-status.sh          # read-only audit
 ```
@@ -132,7 +132,9 @@ committing).
 **Autonomous runs (velador — experimental, not yet validated in a live run):** tell the
 conversation "leave it running until it's done" (or in Spanish: "déjalo corriendo"). The
 `velador` skill makes the model distill its own objective, success criterion and optional
-turn budget into `night/request.md`; the hook claims it for that session and from then on
+turn budget into `night/request.md` — bound to the session via its
+`CLAUDE_CODE_SESSION_ID`, so a parallel conversation sitting in the same directory cannot
+claim someone else's run; the hook claims it for that session and from then on
 re-injects the objective at every turn end, forcing continuation until the model deletes the
 marker (criterion met or genuinely blocked), the budget runs out, or the stall detector
 cuts. **No turn cap by default** (real runs can legitimately last a day); a number in your
@@ -214,7 +216,7 @@ bin/cg-status.sh        read-only audit
 bin/cg-goal.sh          standard goal pointed at the newest plan -> clipboard
 skills/velador/         autonomous runs by natural phrase (installed to ~/.claude/skills)
 templates/night-run.md  the /goal alternative
-tests/run-tests.sh      49 assertions over simulated events, throwaway sandbox
+tests/run-tests.sh      51 assertions over simulated events, throwaway sandbox
 tests/threshold-math.sh formula canary
 logs/ state/ night/     runtime, chmod 700, git-ignored
 disabled                absent by default; touch -> everything no-ops

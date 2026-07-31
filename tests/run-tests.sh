@@ -409,6 +409,31 @@ else
   no 'no budget: uncapped, keeps blocking and says so ("no cap")' "$(printf '%s' "$out" | head -1)"
 fi
 
+# sid binding: the exact 2026-07-31 premiere failure. Two sessions share one
+# cwd; the request carries the owner's sid. The bystander's Stop fires first
+# and must NOT claim it; the owner's Stop then must.
+fresh 14f
+R=$(repo r14f)
+printf '9' > "$CG_HOME/stall-limit"
+printf 'cwd: %s\nsid: sess-owner\nbudget: 5\n---\nOwner objective.\n' "$R" \
+  > "$CG_HOME/night/request.md"
+out=$(printf '{"session_id":"sess-bystander","cwd":"%s"}' "$R" | "$BIN/stop-progress.sh")
+if [ -z "$out" ] && [ -f "$CG_HOME/night/request.md" ] &&
+  [ ! -f "$CG_HOME/night/auto-sess-bystander.md" ]; then
+  ok 'sid binding: a bystander in the SAME cwd cannot claim the request'
+else
+  no 'sid binding: a bystander in the SAME cwd cannot claim the request' \
+    "out=${#out}b request=$([ -f "$CG_HOME/night/request.md" ] && echo alive || echo gone)"
+fi
+out=$(printf '{"session_id":"sess-owner","cwd":"%s"}' "$R" | "$BIN/stop-progress.sh")
+if [ -f "$CG_HOME/night/auto-sess-owner.md" ] &&
+  printf '%s' "$out" | "$JQ" -e '.decision == "block"' > /dev/null 2>&1 &&
+  printf '%s' "$out" | grep -q 'Owner objective'; then
+  ok 'sid binding: the owner claims it on its next turn end'
+else
+  no 'sid binding: the owner claims it on its next turn end' "$(printf '%s' "$out" | head -1)"
+fi
+
 # the model closing the run: deleting the marker ends the loop cleanly
 fresh 14d
 R=$(repo r14d)

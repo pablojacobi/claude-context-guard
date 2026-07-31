@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.0.2 — 2026-07-31
+
+- **Fix: bind autonomous-run requests to their session.** The velador request
+  now carries the owner's `CLAUDE_CODE_SESSION_ID` and the `Stop` hook claims
+  it only on an exact session match — the cwd fallback remains for hand-written
+  requests. Found live on day one: two sessions sharing a checkout are
+  indistinguishable by cwd, and a bystander session claimed the premiere run's
+  request at its own turn end.
+- Test suite: 49 → 51 assertions (bystander-cannot-claim + owner-claims).
+
 ## v0.0.1 — 2026-07-31
 
 Initial public release. Extracted from a private install after live validation:

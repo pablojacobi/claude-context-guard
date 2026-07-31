@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: jq present
         run: command -v jq && jq --version
-      - name: unit suite (49 assertions, throwaway sandbox)
+      - name: unit suite (throwaway sandbox)
         run: tests/run-tests.sh
       - name: threshold formula canary
         run: tests/threshold-math.sh

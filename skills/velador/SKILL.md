@@ -13,6 +13,8 @@ Write `~/.claude/context-guard/night/request.md` with this exact format:
 
 ```
 cwd: <this session's working directory, absolute>
+sid: <this session's id — run `echo "$CLAUDE_CODE_SESSION_ID"` in Bash and
+     paste the exact value>
 budget: <cap on autonomous turns>
 ---
 <OBJECTIVE: what must be achieved, 2-4 sentences>
@@ -22,6 +24,10 @@ budget: <cap on autonomous turns>
 <WHAT NOT TO DO: limits the user set during the conversation>
 ```
 
+- `sid` is what binds the run to THIS conversation: without it, any parallel
+  session sitting in the same directory can claim your request at its next
+  turn end (it happened). If `$CLAUDE_CODE_SESSION_ID` comes back empty, omit
+  the line — the hook then falls back to matching the cwd.
 - `budget`: if the user said a number or a duration, use it (one autonomous turn
   ≈ 5-15 min of work). If they said nothing: **0 = no cap** — the run ends when
   the criterion is met, when you are genuinely blocked, or when the stall
