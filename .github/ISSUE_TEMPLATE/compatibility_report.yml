@@ -1,0 +1,93 @@
+name: Host / OS compatibility report
+description: Tell us whether context-guard works on a host or OS we have not validated.
+title: "compat: <host> on <OS>"
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Only macOS + the TRAE plugin is validated in daily use; Linux is CI-green but unproven
+        in anger, and the plain CLI and VS Code extension are *expected* to work because they
+        share `~/.claude/`. Reports either way are useful — a "works, nothing to see here" is
+        just as valuable as a failure, and it is what turns the Roadmap items into facts.
+
+  - type: input
+    id: host
+    attributes:
+      label: Host / IDE
+      description: And its version.
+      placeholder: "VS Code 1.9x + Claude Code extension · plain CLI · JetBrains · Cursor"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS and architecture
+      placeholder: "Ubuntu 24.04 (x86_64) · Fedora 41 · macOS 14 (x86_64) · WSL2 Ubuntu"
+    validations:
+      required: true
+
+  - type: input
+    id: claude-code-version
+    attributes:
+      label: Claude Code version
+      description: "`claude --version` — the bundled binary's version if you are inside an IDE."
+      placeholder: "2.1.220"
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The threshold only matters on 1M-context models.
+      placeholder: "Opus 5 (1M context)"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: verdict
+    attributes:
+      label: Verdict
+      options:
+        - Works — threshold armed and compactions landed near target
+        - Installs and tests pass, but no compaction observed yet
+        - Partially works — see details
+        - Does not work
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: What you verified
+      options:
+        - label: "`install.sh` merged settings without losing keys and printed no error"
+        - label: "`tests/run-tests.sh` passed"
+        - label: "`tests/threshold-math.sh` passed"
+        - label: "`bin/cg-status.sh` reported the configured threshold"
+        - label: "At least one compaction was logged by the hooks"
+        - label: "`uninstall.sh` restored settings cleanly"
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >-
+        Where a compaction landed vs the 440K target is the number that matters. Paste the
+        `pre_compact` / `post_compact` lines from `~/.claude/context-guard/logs/YYYY-MM.jsonl`,
+        or the `bin/cg-status.sh` output. Redact `cwd` / `branch` / `head` if sensitive.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: friction
+    attributes:
+      label: What broke or needed a workaround
+      description: >-
+        Missing `jq`, a different `~/.claude/` location, a host that rewrites `settings.json`,
+        GNU-vs-BSD tool differences, shell other than bash — anything you had to work around.
+    validations:
+      required: false

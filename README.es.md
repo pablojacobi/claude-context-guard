@@ -58,7 +58,7 @@ conservan la configuración anterior: abre una nueva.
 Verificar:
 
 ```sh
-~/.claude/context-guard/tests/run-tests.sh        # 49 aserciones, sandbox descartable
+~/.claude/context-guard/tests/run-tests.sh        # 51 aserciones, sandbox descartable
 ~/.claude/context-guard/tests/threshold-math.sh   # canario de la fórmula
 ~/.claude/context-guard/bin/cg-status.sh          # auditoría de solo lectura
 ```
@@ -218,7 +218,8 @@ find ~/.claude/context-guard/logs -name '*.jsonl' -mtime +90 -delete
 ## Archivos
 
 ```
-install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md · LICENSE
+install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md
+CONTRIBUTING.md · LICENSE
 bin/lib.sh              helpers; todo falla en abierto
 bin/pre-compact.sh      contrato vía stdout + log         (stdout = SOLO el contrato)
 bin/post-compact.sh     tokens antes/después/ahorrados + chequeo del contrato
@@ -227,7 +228,7 @@ bin/cg-status.sh        auditoría de solo lectura
 bin/cg-goal.sh          goal estándar apuntado al plan más nuevo -> portapapeles
 skills/velador/         corridas autónomas por frase natural (se instala en ~/.claude/skills)
 templates/night-run.md  la alternativa a /goal
-tests/run-tests.sh      49 aserciones sobre eventos simulados, sandbox descartable
+tests/run-tests.sh      51 aserciones sobre eventos simulados, sandbox descartable
 tests/threshold-math.sh canario de la fórmula
 logs/ state/ night/     runtime, chmod 700, ignorados por git
 disabled                ausente por defecto; touch -> todo pasa a no-op
@@ -241,6 +242,23 @@ stall-limit             turnos sin progreso antes de STALLED (por defecto 6)
 - Validación en más hosts: se espera que el CLI plano y la extensión de VS Code funcionen
   (mismo `~/.claude/`), los reportes son bienvenidos.
 - Pruebas de campo en Linux (CI en verde hoy, sin probar en uso diario).
+
+## Comunidad
+
+La hoja de ruta de arriba son, casi toda, preguntas que solo pueden responder las máquinas de
+otras personas: acá un reporte vale tanto como un parche.
+
+- **¿Encontraste un bug?** [Abrí un reporte de bug](https://github.com/pablojacobi/claude-context-guard/issues/new?template=bug_report.yml).
+  Pide tu versión de Claude Code, el IDE anfitrión, el OS y la línea relevante de
+  `logs/YYYY-MM.jsonl` — esa línea suele ser el diagnóstico completo.
+- **¿Lo corriste en un host u OS que no figura arriba?**
+  [Mandá un reporte de compatibilidad](https://github.com/pablojacobi/claude-context-guard/issues/new?template=compatibility_report.yml),
+  incluso si es un simple "funciona, nada que ver acá". Eso es justamente lo que asciende un
+  ítem de la hoja de ruta a hecho.
+- **¿Mandás código?** [CONTRIBUTING.md](CONTRIBUTING.md) tiene los tres comandos que corre CI,
+  las convenciones de scripting de las que dependen los hooks (fallar en abierto,
+  `set -uo pipefail`, el stdout de `pre-compact.sh` es el contrato y nada más) y la regla de
+  PRs: `main` está protegido, todo entra por PR con CI en verde.
 
 ## Licencia
 
