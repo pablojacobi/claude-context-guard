@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Velador status updated after its first live run: 50+ sustained re-injections on a real
+  merge campaign, session-bound claim holding, clean model-driven close. Budget/stall cuts
+  remain test-suite-only.
+- Documented that the skill trigger is best-effort (verify via `night/request.md`) and that
+  irreversible-action bans belong in `permissions.deny`, not prose (#5).
+- Dropped `README.es.md`: a single canonical English README beats a translation that drifts.
+
 ## v0.0.2 — 2026-07-31
 
 - **Fix: bind autonomous-run requests to their session.** The velador request
