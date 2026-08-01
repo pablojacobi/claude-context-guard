@@ -1,8 +1,5 @@
 # claude-context-guard
 
-> This README is the canonical document. A Spanish translation is available at
-> [README.es.md](README.es.md).
-
 Lowers the context ceiling of every Claude Code conversation from **~784,000 to ~440,000
 tokens** on 1M-context models — independently per session, auditable, and fully reversible.
 No clicks, no `tmux send-keys`, no external supervisor process.
@@ -132,7 +129,7 @@ not change, **and** no file under the cwd was modified (the filesystem signal ex
 git-only detection once flagged a session that was legitimately researching without
 committing).
 
-**Autonomous runs (velador — experimental, not yet validated in a live run):** tell the
+**Autonomous runs (velador):** tell the
 conversation "leave it running until it's done" (or in Spanish: "déjalo corriendo"). The
 `velador` skill makes the model distill its own objective, success criterion and optional
 turn budget into `night/request.md` — bound to the session via its
@@ -144,6 +141,18 @@ cuts. **No turn cap by default** (real runs can legitimately last a day); a numb
 phrase becomes a hard cap. The count is visible in every re-injection and in the handoff.
 `/goal` + `bin/cg-goal.sh` remain as the alternative with an external judge
 (`templates/night-run.md`).
+
+First live run (2026-07-31): 50+ sustained re-injections on a real six-lane merge campaign,
+session-bound claim holding with parallel sessions open, stall counter oscillating and
+resetting on progress, clean model-driven close. The budget and stall cut paths remain
+test-suite-only so far.
+
+**Verify it actually engaged**: the trigger phrase is best-effort — a model can complete
+your task as a normal conversation without ever invoking the skill (observed live). Right
+after it confirms objective/criterion/budget, check that `night/request.md` exists (or that
+`night/auto-<sid>.md` appears after its first turn). No file = no loop. And do not rely on
+prose like "do not merge" to prevent irreversible actions during autonomous runs — that is
+what your `permissions.deny` list is for (see issue #5).
 
 ## Operation
 
@@ -192,8 +201,10 @@ find ~/.claude/context-guard/logs -name '*.jsonl' -mtime +90 -delete
    verifiable progress" — which is the useful truth, not a fabricated reconstruction.
 8. **Progress is measured by git + file activity under the cwd.** A session that only reads
    still counts as stalled; raise `stall-limit` if that bothers you.
-9. **The velador is experimental.** Every other layer has live production measurements
-   behind it; the velador has a full test-suite cycle but no real overnight run yet.
+9. **The velador's cut paths are test-suite-only.** The happy path is production-measured
+   (50+ sustained re-injections, model-driven close); the budget cut and the stall cut have
+   not fired in a live run yet. And the skill trigger is best-effort — verify engagement
+   via `night/request.md` (see Layer 3).
 10. **Compaction does not refund tokens already spent.** It lowers the ceiling: the saving
     comes from not cruising at 780K, not from a rebate.
 
@@ -210,7 +221,7 @@ find ~/.claude/context-guard/logs -name '*.jsonl' -mtime +90 -delete
 ## Files
 
 ```
-install.sh · uninstall.sh · README.md · README.es.md · contract.md · CHANGELOG.md
+install.sh · uninstall.sh · README.md · contract.md · CHANGELOG.md
 CONTRIBUTING.md · LICENSE
 bin/lib.sh              helpers; everything fails open
 bin/pre-compact.sh      contract via stdout + log        (stdout = ONLY the contract)
@@ -230,7 +241,8 @@ stall-limit             turns without progress before STALLED (default 6)
 
 ## Roadmap
 
-- First live validation of the velador (v0.1 gate).
+- Exercise the velador's budget and stall cuts in a live run (the happy path is
+  production-validated; v0.1 gate).
 - Broader host validation: plain CLI and VS Code extension are expected to work (same
   `~/.claude/`), reports welcome.
 - Linux field testing (CI-green today, unproven in daily use).

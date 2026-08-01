@@ -55,6 +55,4 @@ this in the *clone-anywhere install smoke* step, and it is the only step that wr
 4. All three CI checks must pass: `lint`, `test (ubuntu-latest)`, `test (macos-latest)`.
 
 Commit messages follow the existing log: `type(scope): imperative summary` (`fix(velador): …`,
-`docs: …`). Update `CHANGELOG.md` when the change is user-visible, and keep
-[`README.es.md`](README.es.md) in sync when you edit [`README.md`](README.md) — the English one
-is canonical.
+`docs: …`). Update `CHANGELOG.md` when the change is user-visible.
